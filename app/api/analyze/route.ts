@@ -62,7 +62,7 @@ export async function POST(request: Request) {
       console.log("Image URL retrieved:", imageUrl);
     } catch (uploadError) {
       console.error("Error uploading to Firebase Storage:", uploadError);
-      // 即使上传失败，我们也继续进行分析
+      // 继续执行，即使上传失败
     }
 
     // AI 分析部分
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
           content: [
             {
               type: "text",
-              text: "分析这张图片是否为猫咪。如果是，给出0.0-8.0分的颜值评分和一段刻薄、毒辣但又幽默的评价，风格类似鲁迅或乔治·卡林。请严格按照以下JSON格式回复，不要添加任何额外文本：{\"isCat\": boolean, \"score\": number, \"comment\": string}。\n\n评价要求：\n1. 针对性：仔细观察图片中猫咪的特征（如眼睛、耳朵、毛发等），找到最突出或最独特的部分进行评价。\n2. 比喻性：使用创意性的比喻，将猫咪的特征与意想不到的事物联系起来。\n3. 讽刺性：用看似赞美实则贬低的方式描述猫咪。\n4. 夸张性：适度夸大猫咪的特征，制造幽默效果。\n5. 文化引用：适当引用流行文化、历史或文学元素，增加评价的深度。"
+              text: "分析这张图片是否为猫咪。如果是，给出0.0-8.0分的颜值评分和一段刻薄、毒辣但又幽默的评价，风格类似鲁迅或乔治·卡林。请严格按照以下JSON格式回复，不要添加任何额外文本：{\"isCat\": boolean, \"score\": number, \"comment\": string}"
             },
             {
               type: "image_url",
@@ -88,14 +88,16 @@ export async function POST(request: Request) {
     });
 
     const aiResponseContent = completion.choices[0].message.content;
-    console.log("AI Response:", aiResponseContent);
+    console.log("Raw AI Response:", aiResponseContent);
 
     let aiResponse;
     try {
-      aiResponse = JSON.parse(aiResponseContent || '{}');
+      // 移除可能的 markdown 标记
+      const cleanedResponse = aiResponseContent.replace(/```json\n|\n```/g, '');
+      aiResponse = JSON.parse(cleanedResponse);
     } catch (error) {
       console.error("Failed to parse AI response as JSON:", error);
-      return NextResponse.json({ error: "Invalid AI response" }, { status: 500 });
+      return NextResponse.json({ error: "Invalid AI response", rawResponse: aiResponseContent }, { status: 500 });
     }
     
     if (aiResponse.isCat && typeof aiResponse.score === 'number') {
@@ -120,7 +122,7 @@ export async function POST(request: Request) {
         }
       } catch (firestoreError) {
         console.error("Error saving to Firestore:", firestoreError);
-        // 即使 Firestore 保存失败，我们仍然返回分析结果给用户
+        // 继续执行，即使 Firestore 保存失败
       }
 
       return NextResponse.json({

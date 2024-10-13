@@ -16,17 +16,8 @@ let app: FirebaseApp;
 let db: Firestore;
 let storage: FirebaseStorage;
 
-if (typeof window !== 'undefined') {
-  if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-  } else {
-    app = getApps()[0];
-  }
-  db = getFirestore(app);
-  storage = getStorage(app);
-  console.log("Firebase initialized successfully");
-} else {
-  // 服务器端初始化
+if (typeof window === 'undefined') {
+  // 服务器端
   if (!getApps().length) {
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
@@ -37,6 +28,16 @@ if (typeof window !== 'undefined') {
     db = getFirestore(app);
     storage = getStorage(app);
   }
+} else {
+  // 客户端
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+  } else {
+    app = getApps()[0];
+  }
+  db = getFirestore(app);
+  storage = getStorage(app);
+  console.log("Firebase initialized on client");
 }
 
 export { db, storage };
