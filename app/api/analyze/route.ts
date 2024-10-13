@@ -10,8 +10,11 @@ const client = new OpenAI({
 });
 
 const scoreDescriptions = [
-  { minScore: 0, maxScore: 3.5, description: "你这猫颜值丑过了{percent}%的猫。它看起来就像是大自然在创造猫咪时喝高了，然后说'管他呢，就这样吧'。" },
-  { minScore: 3.5, maxScore: 5.5, description: "你这猫颜值丑过了{percent}%的猫。如果丑能当饭吃，它怕是能解决全球饥饿问题。" },
+  { minScore: 0, maxScore: 1.5, description: "你这猫颜值丑过了{percent}%的猫。它看起来就像是大自然在创造猫咪时不小心把'丑'的滑块拉到了最大值。" },
+  { minScore: 1.5, maxScore: 2.5, description: "你这猫颜值丑过了{percent}%的猫。它的长相简直是对进化论的一记响亮耳光。" },
+  { minScore: 2.5, maxScore: 3.5, description: "你这猫颜值丑过了{percent}%的猫。它看起来就像是大自然在创造猫咪时喝高了，然后说'管他呢，就这样吧'。" },
+  { minScore: 3.5, maxScore: 4.5, description: "你这猫颜值丑过了{percent}%的猫。如果丑能当饭吃，它怕是能解决全球饥饿问题的一半。" },
+  { minScore: 4.5, maxScore: 5.5, description: "你这猫颜值丑过了{percent}%的猫。它的存在让我们重新定义了'独特'这个词的含义。" },
   { minScore: 5.5, maxScore: 6.0, description: "你这猫颜值丑过了{percent}%的猫。它的脸就像是一幅毕加索的画作 - 有人说是艺术，但大多数人只是感到困惑。" },
   { minScore: 6.0, maxScore: 6.5, description: "你这猫颜值丑过了{percent}%的猫。它的存在证明了即使是上帝也有周一综合症。" },
   { minScore: 6.5, maxScore: 7.0, description: "你这猫颜值丑过了{percent}%的猫。它大概是在'最不像猫的猫'比赛中拿了冠军。" },
@@ -61,7 +64,7 @@ export async function POST(request: Request) {
           content: [
             {
               type: "text",
-              text: `你是「丑猫排行榜」的专业评委，对喵星人了如指掌。请分析这张图片是否为猫咪。如果是，给出0.0-9.9分的颜值评分（倾向于给出更低的分数，大多数猫应该在6分以下）和一段极度刻薄、毒舌、冒犯又幽默的评价。评价时可以参考以下标准：面部对称性、毛发质地、眼睛大小和形状、神情、姿势、动作、整体面部轮廓等。请用最尖锐、最刻薄的语言去描述，不要有任何顾虑，越冒犯越好。严格按照以下JSON格式回复，不要添加任何额外文本：{"isCat": boolean, "score": number, "comment": string}。以下是一些示例回复：
+              text: `你是「丑猫排行榜」的专业评委，对喵星人了如指掌。请分析这张图片是否为猫咪。如果是，给出0.0-9.9分的颜值评分（倾向于给出更低的分数，大多数猫应该在7分以下）和一段极度刻薄、毒舌、冒犯又幽默的评价。评价时可以参考以下标准：面部对称性、毛发质地、眼睛大小和形状、神情、姿势、动作、整体面部轮廓等。请用最尖锐、最刻薄、冒犯但不失幽默的语言去描述，不要有任何顾虑，越冒犯越好，语言风格请模范鲁迅和乔治卡林。严格按照以下JSON格式回复，不要添加任何额外文本：{"isCat": boolean, "score": number, "comment": string}。以下是一些示例回复：
 
               {"isCat": true, "score": 2.4, "comment": "这只猫的脸就像被卡车碾过又被狗啃了一样。它的眼睛不对称到让人怀疑是不是来自两个不同的物种，毛发凌乱得像是被龙卷风袭击过。这张脸简直是大自然的一个错误。"}
 
