@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import html2canvas from 'html2canvas';
+import imageCompression from 'browser-image-compression';
 
 const DAILY_LIMIT = 5;
 
@@ -40,6 +41,22 @@ export default function ImageUpload() {
     }
   }, []);
 
+  const compressImage = async (file: File) => {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true
+    };
+    
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      return file; // 如果压缩失败，返回原始文件
+    }
+  };
+
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (usageCount >= DAILY_LIMIT) {
       alert('您今天的使用次数已达上限，请明天再来！');
@@ -56,10 +73,11 @@ export default function ImageUpload() {
     setImagePreview(URL.createObjectURL(file));
     setAnalysisResult(null);
 
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
+      const compressedFile = await compressImage(file);
+      const formData = new FormData();
+      formData.append('file', compressedFile);
+
       setIsAnalyzing(true);
       const response = await fetch('/api/analyze', {
         method: 'POST',
@@ -71,7 +89,20 @@ export default function ImageUpload() {
       }
 
       const data = await response.json();
+      console.log("Received raw data from server:", JSON.stringify(data, null, 2));
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      // 验证接收到的数据
+      if (typeof data.isCat !== 'boolean' || (data.isCat && (typeof data.score !== 'string' || typeof data.comment !== 'string' || typeof data.description !== 'string'))) {
+        console.error("Received invalid data structure:", data);
+        throw new Error('Received invalid data structure from server');
+      }
+
       setAnalysisResult(data);
+      console.log("Set analysis result:", JSON.stringify(data, null, 2));
 
       if (!data.isCat) {
         alert(data.comment || '这不是一张猫咪的照片。');
@@ -83,7 +114,7 @@ export default function ImageUpload() {
       localStorage.setItem('usageCount', newCount.toString());
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('上传图片失败，请重试。');
+      alert('分析图片时出现错误，请重试。');
     } finally {
       setIsUploading(false);
       setIsAnalyzing(false);
