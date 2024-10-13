@@ -182,3 +182,24 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 4px 20px rgba(236, 72, 153, 0.2);
 }
+
+@keyframes catWalk {
+  0%, 100% { transform: translateX(-20px) rotateY(0deg); }
+  25% { transform: translateX(-10px) rotateY(0deg); }
+  50% { transform: translateX(0px) rotateY(180deg); }
+  75% { transform: translateX(10px) rotateY(180deg); }
+}
+
+.cat-loader {
+  width: 100px;
+  height: 100px;
+  animation: catWalk 2s infinite linear;
+}
+
+.cat-loader path {
+  fill: none;
+  stroke: #00ffff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

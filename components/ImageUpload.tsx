@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 
+const DAILY_LIMIT = 5;
+
 export default function ImageUpload() {
   const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -15,6 +17,7 @@ export default function ImageUpload() {
   } | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
   const [html2canvas, setHtml2canvas] = useState<any>(null);
+  const [usageCount, setUsageCount] = useState(0);
 
   useEffect(() => {
     import('html2canvas').then(module => {
@@ -22,16 +25,32 @@ export default function ImageUpload() {
     });
   }, []);
 
+  useEffect(() => {
+    const today = new Date().toDateString();
+    const storedDate = localStorage.getItem('lastUsageDate');
+    const storedCount = localStorage.getItem('usageCount');
+
+    if (storedDate !== today) {
+      localStorage.setItem('lastUsageDate', today);
+      localStorage.setItem('usageCount', '0');
+      setUsageCount(0);
+    } else if (storedCount) {
+      setUsageCount(parseInt(storedCount, 10));
+    }
+  }, []);
+
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    if (usageCount >= DAILY_LIMIT) {
+      alert('您今天的使用次数已达上限，请明天再来！');
+      return;
+    }
 
     setIsUploading(true);
-    setImagePreview(URL.createObjectURL(file));
+    setImagePreview(URL.createObjectURL(event.target.files?.[0]));
     setAnalysisResult(null);
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', event.target.files?.[0]);
 
     try {
       setIsAnalyzing(true);
@@ -50,6 +69,11 @@ export default function ImageUpload() {
       if (!data.isCat) {
         alert(data.comment || '这不是一张猫咪的照片。');
       }
+
+      // 更新使用次数
+      const newCount = usageCount + 1;
+      setUsageCount(newCount);
+      localStorage.setItem('usageCount', newCount.toString());
     } catch (error) {
       console.error('Error uploading image:', error);
       alert('上传图片失败，请重试。');
@@ -110,7 +134,14 @@ export default function ImageUpload() {
             />
             {isAnalyzing && (
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
-                <div className="cat-loader"></div>
+                <svg className="cat-loader" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M50 15 L30 35 L70 35 Z" />
+                  <path d="M30 35 Q20 50 30 65" />
+                  <path d="M70 35 Q80 50 70 65" />
+                  <path d="M30 65 Q50 85 70 65" />
+                  <circle cx="40" cy="45" r="5" />
+                  <circle cx="60" cy="45" r="5" />
+                </svg>
               </div>
             )}
             {analysisResult && analysisResult.isCat && (
@@ -126,7 +157,7 @@ export default function ImageUpload() {
               </div>
             )}
             <div className="mt-6 text-sm text-gray-400 relative z-10">
-              由丑咪挑战赛提供 - 猫咪颜值评分专家
+              由cat.img2046.com创造 - 猫咪颜值评分专家
             </div>
           </div>
           <div className="mt-6 flex justify-center space-x-4">
@@ -143,6 +174,7 @@ export default function ImageUpload() {
               保存结果
             </button>
           </div>
+          <p className="mt-4 text-sm text-gray-400">今日剩余使用次数：{DAILY_LIMIT - usageCount}</p>
         </div>
       )}
     </div>
