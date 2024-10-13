@@ -1,6 +1,6 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { initializeApp, getApps, FirebaseApp } from "firebase/app";
+import { getFirestore, Firestore } from "firebase/firestore";
+import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDCeU0rdmzScorck5nLQ3z3sCkje86ZfeE",
@@ -12,18 +12,31 @@ const firebaseConfig = {
   measurementId: "G-6CY8PL34Q0"
 };
 
-let app;
-let db;
-let storage;
+let app: FirebaseApp;
+let db: Firestore;
+let storage: FirebaseStorage;
 
-try {
-  // 检查是否已经初始化了 Firebase
-  app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+if (typeof window !== 'undefined') {
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+  } else {
+    app = getApps()[0];
+  }
   db = getFirestore(app);
   storage = getStorage(app);
   console.log("Firebase initialized successfully");
-} catch (error) {
-  console.error("Error initializing Firebase:", error);
+} else {
+  // 服务器端初始化
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    storage = getStorage(app);
+    console.log("Firebase initialized on server");
+  } else {
+    app = getApps()[0];
+    db = getFirestore(app);
+    storage = getStorage(app);
+  }
 }
 
 export { db, storage };
