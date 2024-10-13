@@ -1,3 +1,5 @@
+
+
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { kv } from '@vercel/kv';
@@ -6,7 +8,6 @@ const client = new OpenAI({
   apiKey: process.env.DASHSCOPE_API_KEY,
   baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
 });
-
 
 const scoreDescriptions = [
   { minScore: 0, maxScore: 3.5, description: "你这猫颜值丑过了{percent}%的猫。它看起来就像是大自然在创造猫咪时喝高了，然后说'管他呢，就这样吧'。" },
@@ -20,7 +21,7 @@ const scoreDescriptions = [
   { minScore: 8.5, maxScore: 9.0, description: "天哪，你这猫颜值超过了{percent}%的猫。它这么漂亮，我们都怀疑你是不是偷偷PS过。这里可是丑猫比赛，不是选美大赛！" },
   { minScore: 9.0, maxScore: 9.5, description: "我的老天，你这猫颜值超过了{percent}%的猫。它这么美，简直是在嘲笑我们办这个比赛。你确定你没走错片场吗？" },
   { minScore: 9.5, maxScore: 10, description: "我不敢相信，你这猫颜值超过了{percent}%的猫。它长得这么完美，我们都怀疑是不是外星生物假扮的。这简直是在侮辱'丑'这个字！" }
-]
+];
 
 function calculatePercentile(score: number): number {
   if (score <= 0) return 99.99;
@@ -60,7 +61,15 @@ export async function POST(request: Request) {
           content: [
             {
               type: "text",
-              text: "你是「丑猫排行榜」的专业评委，对喵星人了如指掌。请分析这张图片是否为猫咪。如果是，给出0.0-9.9分的颜值评分（倾向于给出更低的分数，大多数猫应该在5分以下）和一段极度刻薄、毒舌、冒犯又幽默的评价。评价时可以参考以下标准：面部对称性、毛发质地、眼睛大小和形状、鼻子和嘴的比例、耳朵的位置和形状、整体面部轮廓。请用最尖锐、最刻薄的语言去描述，不要有任何顾虑，越冒犯越好。严格按照以下JSON格式回复，不要添加任何额外文本：{\"isCat\": boolean, \"score\": number, \"comment\": string}"
+              text: `你是「丑猫排行榜」的专业评委，对喵星人了如指掌。请分析这张图片是否为猫咪。如果是，给出0.0-9.9分的颜值评分（倾向于给出更低的分数，大多数猫应该在6分以下）和一段极度刻薄、毒舌、冒犯又幽默的评价。评价时可以参考以下标准：面部对称性、毛发质地、眼睛大小和形状、神情、姿势、动作、整体面部轮廓等。请用最尖锐、最刻薄的语言去描述，不要有任何顾虑，越冒犯越好。严格按照以下JSON格式回复，不要添加任何额外文本：{"isCat": boolean, "score": number, "comment": string}。以下是一些示例回复：
+
+              {"isCat": true, "score": 2.4, "comment": "这只猫的脸就像被卡车碾过又被狗啃了一样。它的眼睛不对称到让人怀疑是不是来自两个不同的物种，毛发凌乱得像是被龙卷风袭击过。这张脸简直是大自然的一个错误。"}
+
+              {"isCat": true, "score": 5.8, "comment": "哇，这只猫的脸真是'独特'啊。它的鼻子歪得像是在躲避它那双令人不安的眼睛。毛发看起来像是被静电击中后就再也没梳理过。如果丑能当饭吃，它至少能养活一个小村庄。"}
+
+              {"isCat": true, "score": 8.2, "comment": "等等，这是猫吗？我还以为是某个超模呢！它那完美对称的脸蛋简直是在嘲笑我们办这个比赛。那双闪亮的大眼睛恐怕能当夜间照明用。真不敢相信它竟然来参加丑猫比赛，这简直是在侮辱'丑'字！"}
+
+              请根据图片内容，参考以上示例，给出相应的评价。`
             },
             {
               type: "image_url",
