@@ -15,6 +15,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['openai', 'firebase'],
   },
+  transpilePackages: ['html2canvas'],
 }
 
 module.exports = nextConfig

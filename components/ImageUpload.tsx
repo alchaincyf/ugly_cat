@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
-import { Html2CanvasOptions } from 'html2canvas';
+import html2canvas from 'html2canvas';
 
 const DAILY_LIMIT = 5;
 
@@ -17,12 +17,12 @@ export default function ImageUpload() {
     description?: string;
   } | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
-  const [html2canvas, setHtml2canvas] = useState<((element: HTMLElement, options?: Html2CanvasOptions) => Promise<HTMLCanvasElement>) | null>(null);
+  const [html2canvasModule, setHtml2canvasModule] = useState<typeof html2canvas | null>(null);
   const [usageCount, setUsageCount] = useState(0);
 
   useEffect(() => {
     import('html2canvas').then(module => {
-      setHtml2canvas(() => module.default);
+      setHtml2canvasModule(() => module.default);
     });
   }, []);
 
@@ -90,8 +90,8 @@ export default function ImageUpload() {
   };
 
   const saveImage = async () => {
-    if (resultRef.current && html2canvas) {
-      const canvas = await html2canvas(resultRef.current, {
+    if (resultRef.current && html2canvasModule) {
+      const canvas = await html2canvasModule(resultRef.current, {
         backgroundColor: null,
         scale: 2, // 提高导出图片的清晰度
       });
