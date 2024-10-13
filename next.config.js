@@ -16,6 +16,9 @@ const nextConfig = {
     serverComponentsExternalPackages: ['openai', 'firebase'],
   },
   transpilePackages: ['html2canvas'],
+  images: {
+    domains: ['firebasestorage.googleapis.com'],
+  },
 }
 
 module.exports = nextConfig

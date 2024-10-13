@@ -46,12 +46,18 @@ export default function ImageUpload() {
       return;
     }
 
+    const file = event.target.files?.[0];
+    if (!file) {
+      alert('请选择一个文件');
+      return;
+    }
+
     setIsUploading(true);
-    setImagePreview(URL.createObjectURL(event.target.files?.[0]));
+    setImagePreview(URL.createObjectURL(file));
     setAnalysisResult(null);
 
     const formData = new FormData();
-    formData.append('file', event.target.files?.[0]);
+    formData.append('file', file);
 
     try {
       setIsAnalyzing(true);
