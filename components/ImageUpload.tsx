@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { Html2CanvasOptions } from 'html2canvas';
 
 const DAILY_LIMIT = 5;
 
@@ -16,7 +17,7 @@ export default function ImageUpload() {
     description?: string;
   } | null>(null);
   const resultRef = useRef<HTMLDivElement>(null);
-  const [html2canvas, setHtml2canvas] = useState<any>(null);
+  const [html2canvas, setHtml2canvas] = useState<((element: HTMLElement, options?: Html2CanvasOptions) => Promise<HTMLCanvasElement>) | null>(null);
   const [usageCount, setUsageCount] = useState(0);
 
   useEffect(() => {
