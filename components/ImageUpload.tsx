@@ -126,6 +126,13 @@ export default function ImageUpload() {
     setAnalysisResult(null);
   };
 
+  const isMobile = () => {
+    if (typeof window !== 'undefined') {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    return false;
+  };
+
   const saveImage = async () => {
     if (resultRef.current && html2canvasModule) {
       const canvas = await html2canvasModule(resultRef.current, {
@@ -133,10 +140,25 @@ export default function ImageUpload() {
         scale: 2, // 提高导出图片的清晰度
       });
       const image = canvas.toDataURL("image/png");
-      const link = document.createElement('a');
-      link.download = 'my-cat-score.png';
-      link.href = image;
-      link.click();
+
+      if (isMobile()) {
+        // 对于移动设备，我们创建一个临时的 <a> 元素来触发下载
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = 'my-cat-score.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // 提示用户保存到相册
+        alert('图片已生成，请长按图片并选择"添加到相册"以保存。');
+      } else {
+        // 对于桌面设备，保持原有的下载方式
+        const link = document.createElement('a');
+        link.download = 'my-cat-score.png';
+        link.href = image;
+        link.click();
+      }
     }
   };
 
@@ -207,7 +229,7 @@ export default function ImageUpload() {
               onClick={saveImage}
               className="btn-primary"
             >
-              保存结果
+              {isMobile() ? '生成图片' : '保存结果'}
             </button>
           </div>
           <p className="mt-4 text-sm text-gray-400">今日剩余使用次数：{DAILY_LIMIT - usageCount}</p>

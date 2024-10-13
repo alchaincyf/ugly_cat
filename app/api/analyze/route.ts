@@ -1,5 +1,3 @@
-
-
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { kv } from '@vercel/kv';
@@ -43,6 +41,9 @@ function calculatePercentile(score: number): number {
 }
 
 export async function POST(request: Request) {
+  // 增加总请求计数
+  await kv.incr('total_requests');
+
   const data = await request.formData();
   const file: File | null = data.get('file') as unknown as File;
 
