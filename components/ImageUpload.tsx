@@ -134,14 +134,12 @@ export default function ImageUpload() {
             />
             {isAnalyzing && (
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
-                <svg className="cat-loader" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M50 15 L30 35 L70 35 Z" />
-                  <path d="M30 35 Q20 50 30 65" />
-                  <path d="M70 35 Q80 50 70 65" />
-                  <path d="M30 65 Q50 85 70 65" />
-                  <circle cx="40" cy="45" r="5" />
-                  <circle cx="60" cy="45" r="5" />
-                </svg>
+                <div className="paw-loader">
+                  <div className="paw"></div>
+                  <div className="paw"></div>
+                  <div className="paw"></div>
+                  <div className="paw"></div>
+                </div>
               </div>
             )}
             {analysisResult && analysisResult.isCat && (

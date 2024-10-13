@@ -203,3 +203,44 @@ body {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
+/* 在文件末尾添加以下内容 */
+
+@keyframes pawAnimation {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(10px, -10px) rotate(10deg); }
+  50% { transform: translate(-5px, 5px) rotate(-5deg); }
+  75% { transform: translate(5px, 5px) rotate(5deg); }
+}
+
+.paw-loader {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.paw {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: #ff69b4;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: pawAnimation 2s infinite;
+}
+
+.paw::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  background-color: #ff69b4;
+  border-radius: 50%;
+}
+
+.paw:nth-child(1) { top: 0; left: 0; animation-delay: 0s; }
+.paw:nth-child(2) { top: 0; right: 0; animation-delay: 0.5s; }
+.paw:nth-child(3) { bottom: 0; left: 0; animation-delay: 1s; }
+.paw:nth-child(4) { bottom: 0; right: 0; animation-delay: 1.5s; }
