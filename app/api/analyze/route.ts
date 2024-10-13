@@ -92,9 +92,13 @@ export async function POST(request: Request) {
 
     let aiResponse;
     try {
-      // 移除可能的 markdown 标记
-      const cleanedResponse = aiResponseContent.replace(/```json\n|\n```/g, '');
-      aiResponse = JSON.parse(cleanedResponse);
+      if (aiResponseContent) {
+        // 移除可能的 markdown 标记
+        const cleanedResponse = aiResponseContent.replace(/```json\n|\n```/g, '');
+        aiResponse = JSON.parse(cleanedResponse);
+      } else {
+        throw new Error("AI response content is null");
+      }
     } catch (error) {
       console.error("Failed to parse AI response as JSON:", error);
       return NextResponse.json({ error: "Invalid AI response", rawResponse: aiResponseContent }, { status: 500 });

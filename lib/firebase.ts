@@ -16,28 +16,33 @@ let app: FirebaseApp;
 let db: Firestore;
 let storage: FirebaseStorage;
 
-if (typeof window === 'undefined') {
-  // 服务器端
-  if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
+try {
+  if (typeof window === 'undefined') {
+    // 服务器端
+    if (!getApps().length) {
+      app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      storage = getStorage(app);
+      console.log("Firebase initialized on server");
+    } else {
+      app = getApps()[0];
+      db = getFirestore(app);
+      storage = getStorage(app);
+    }
+  } else {
+    // 客户端
+    if (!getApps().length) {
+      app = initializeApp(firebaseConfig);
+    } else {
+      app = getApps()[0];
+    }
     db = getFirestore(app);
     storage = getStorage(app);
-    console.log("Firebase initialized on server");
-  } else {
-    app = getApps()[0];
-    db = getFirestore(app);
-    storage = getStorage(app);
+    console.log("Firebase initialized on client");
   }
-} else {
-  // 客户端
-  if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-  } else {
-    app = getApps()[0];
-  }
-  db = getFirestore(app);
-  storage = getStorage(app);
-  console.log("Firebase initialized on client");
+} catch (error) {
+  console.error("Error initializing Firebase:", error);
+  throw error; // 重新抛出错误，以便上层代码可以处理
 }
 
 export { db, storage };
