@@ -12,6 +12,9 @@ const nextConfig = {
     }
     return config;
   },
+  experimental: {
+    serverComponentsExternalPackages: ['openai', 'firebase'],
+  },
 }
 
 module.exports = nextConfig

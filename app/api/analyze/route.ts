@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
-import { OpenAI } from 'openai';
+import OpenAI from 'openai';
+import { db, storage } from '../../../lib/firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import { ref, uploadString } from 'firebase/storage';
 
 const client = new OpenAI({
   apiKey: process.env.DASHSCOPE_API_KEY,
@@ -47,6 +50,11 @@ export async function POST(request: Request) {
   try {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const base64Image = buffer.toString('base64');
+
+    // 上传图片到 Firebase Storage
+    const storageRef = ref(storage, `cat_images/${Date.now()}.jpg`);
+    await uploadString(storageRef, base64Image, 'base64', { contentType: 'image/jpeg' });
 
     const completion = await client.chat.completions.create({
       model: "qwen-vl-max",
@@ -87,6 +95,15 @@ export async function POST(request: Request) {
       const description = scoreDescription 
         ? scoreDescription.description.replace('{percent}', percentile.toFixed(2))
         : "这猫长得太神奇了，我都不知道该如何评价。";
+
+      // 将数据保存到 Firestore
+      await addDoc(collection(db, "cat_analyses"), {
+        imageUrl: await storageRef.getDownloadURL(),
+        score: score,
+        comment: aiResponse.comment,
+        description: description,
+        timestamp: new Date()
+      });
 
       return NextResponse.json({
         isCat: true,
