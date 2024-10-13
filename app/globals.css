@@ -1,27 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-futuristic: 'Orbitron', sans-serif;
+  --font-body: 'Roboto', sans-serif;
+  --color-bg: #0a0a0a;
+  --color-text: #e0e0e0;
+  --color-primary: #00ffff;
+  --color-secondary: #ff00ff;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-cyan-500 hover:bg-cyan-600 text-black font-semibold py-2 px-6 rounded-full transition duration-300 ease-in-out shadow-lg hover:shadow-cyan-500/50;
   }
+
+  .btn-secondary {
+    @apply bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-semibold py-2 px-6 rounded-full transition duration-300 ease-in-out shadow-lg hover:shadow-fuchsia-500/50;
+  }
+
+  .card {
+    @apply bg-gray-800 rounded-2xl shadow-lg p-6 backdrop-blur-lg bg-opacity-30 border border-gray-700;
+  }
+
+  .glow {
+    @apply shadow-lg;
+    box-shadow: 0 0 15px var(--color-primary), 0 0 30px var(--color-primary);
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 可以在这里添加自定义全局样式 */
+
+/* 在文件末尾添加以下内容 */
+
+.btn-primary, .btn-secondary {
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+  transform: translateY(-2px);
+}
+
+.glow {
+  transition: box-shadow 0.3s ease;
+}
+
+.glow:hover {
+  box-shadow: 0 0 25px var(--color-primary), 0 0 50px var(--color-primary);
+}
+
+@keyframes cat-walk {
+  0% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-25%) rotate(-5deg); }
+  50% { transform: translateX(0) rotate(0deg); }
+  75% { transform: translateX(25%) rotate(5deg); }
+  100% { transform: translateX(50%) rotate(0deg); }
+}
+
+.cat-loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cat-loader::after {
+  content: '🐱';
+  font-size: 50px;
+  animation: cat-walk 2s infinite alternate;
+}
+
+.image-container {
+  position: relative;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.gradient-bg {
+  background: linear-gradient(45deg, var(--color-primary), var(--color-secondary));
+}
+
+.card {
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+.card {
+  background-color: rgba(31, 41, 55, 0.8); /* 深色背景 */
+  color: #e0e0e0; /* 浅色文字 */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gradient-text {
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #00ffff; /* 降级方案 */
+}
+
+/* 在文件末尾添加以下内容 */
+
+.score-container {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+}
+
+.score-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+}
+
+.comment-container {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(244, 114, 182, 0.1));
+  border: 1px solid rgba(236, 72, 153, 0.2);
+  transition: all 0.3s ease;
+}
+
+.comment-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.2);
 }
