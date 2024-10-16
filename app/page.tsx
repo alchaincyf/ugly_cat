@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 const ImageUpload = dynamic(() => import('../components/ImageUpload'), { ssr: false });
+const AppreciationSection = dynamic(() => import('../components/AppreciationSection'), { ssr: false });
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
           上传你家的毛球，让我们见证它的&quot;特别&quot;之处。每只猫都独一无二，有美有丑。来看看你的主子能否创造新的丑猫传说！
         </p>
         <ImageUpload />
+        <AppreciationSection />
       </main>
       <Footer />
     </div>
