@@ -1,10 +1,28 @@
+
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { kv } from '@vercel/kv';
 
+// 定义AI模型配置
+const AI_MODELS = {
+  dashscope: {
+    apiKey: process.env.DASHSCOPE_API_KEY,
+    baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    model: "qwen-vl-max"
+  },
+  stepfun: {
+    apiKey: process.env.STEPFUN_API_KEY,
+    baseURL: "https://api.stepfun.com/v1",
+    model: "step-1v-8k"
+  }
+};
+
+// 选择要使用的AI模型
+const SELECTED_MODEL = 'stepfun'; // 可以轻松切换为 'stepfun'
+
 const client = new OpenAI({
-  apiKey: process.env.DASHSCOPE_API_KEY,
-  baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  apiKey: AI_MODELS[SELECTED_MODEL].apiKey,
+  baseURL: AI_MODELS[SELECTED_MODEL].baseURL,
 });
 
 const scoreDescriptions = [
@@ -58,7 +76,7 @@ export async function POST(request: Request) {
     // AI 分析部分
     console.log("Starting AI analysis");
     const completion = await client.chat.completions.create({
-      model: "qwen-vl-max",
+      model: AI_MODELS[SELECTED_MODEL].model,
       messages: [
         {
           role: "user",
