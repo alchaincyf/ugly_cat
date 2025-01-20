@@ -18,7 +18,7 @@ const AI_MODELS = {
 };
 
 // 选择要使用的AI模型
-const SELECTED_MODEL = 'stepfun'; // 可以轻松切换为 'stepfun'
+const SELECTED_MODEL = 'dashscope'; // 可以轻松切换为 'stepfun'
 
 const client = new OpenAI({
   apiKey: AI_MODELS[SELECTED_MODEL].apiKey,
